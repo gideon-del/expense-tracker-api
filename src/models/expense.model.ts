@@ -30,6 +30,10 @@ const expenseSchema = new Schema({
     type: String,
     required: true,
   },
+  name: {
+    type: String,
+    required: true,
+  },
   description: String,
 });
 

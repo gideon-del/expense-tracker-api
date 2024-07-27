@@ -25,7 +25,9 @@ async function registerUser(req: Request, res: Response) {
   }
   const hashedPassword = hashPassword(userDetails.password);
   await UserModel.create({
-    ...userDetails,
+    firstName: userDetails.firstName,
+    lastName: userDetails.lastName,
+    email: userDetails.email,
     password: hashedPassword,
   });
   return res.status(201).json({

@@ -22,4 +22,19 @@ const loginSchema = z.object({
       "Must contain one uppercase letter,one lowercase letter, number and one special character "
     ),
 });
-export { registerSchema, loginSchema };
+
+const expenseSchema = z.object({
+  description: z.string().optional(),
+  amount: z.number(),
+  category: z.enum([
+    "Groceries",
+    "Leisure",
+    "Electronics",
+    "Utilities",
+    "Clothing",
+    "Health",
+    "Others",
+  ]),
+  name: z.string().min(3, "Field is required"),
+});
+export { registerSchema, loginSchema, expenseSchema };

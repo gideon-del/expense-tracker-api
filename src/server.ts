@@ -3,6 +3,7 @@ import { config } from "dotenv";
 import http from "http";
 import mongoose from "mongoose";
 import authRoute from "./routes/auth.route";
+import expenseRouter from "./routes/expense.route";
 
 config();
 const MONGO_URI = process.env.MONGO_DB!;
@@ -20,6 +21,7 @@ app.use((req, res, next) => {
   }
 });
 app.use("/auth", authRoute);
+app.use("/expense", expenseRouter);
 const port = process.env.PORT || 8000;
 const server = http.createServer(app);
 const startServer = async () => {

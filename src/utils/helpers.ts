@@ -38,7 +38,7 @@ function generateToken(userId: string): UserToken {
 
 function verifyToken(accessToken: string) {
   try {
-    const userData = jwt.verify(accessToken, process.env.JWT_SECRET!);
+    const userData = jwt.verify(accessToken, accessTokenSecret);
     return userData;
   } catch (error) {
     console.error("Invalid token");
