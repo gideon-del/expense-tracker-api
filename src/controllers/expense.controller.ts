@@ -74,12 +74,44 @@ async function updateExpense(req: Request, res: Response) {
 async function getAllExpense(req: Request, res: Response) {
   //@ts-ignore
   const userId = req.user;
-  const expenses = await ExpenseModel.find({
-    userId,
-  });
+
+  const { filter } = req.query;
+  let expenses;
+  if (!filter) {
+    expenses = await ExpenseModel.find({
+      userId,
+    });
+  }
+  if (filter === "Past week") {
+    const pastWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+    expenses = await ExpenseModel.find({
+      userId,
+      createdAt: {
+        $lte: pastWeek,
+      },
+    });
+  }
+  if (filter === "Last month") {
+    const lastMonth = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    expenses = await ExpenseModel.find({
+      userId,
+      createdAt: {
+        $lte: lastMonth,
+      },
+    });
+  }
+  if (filter === "Last 3 months") {
+    const lastThreeMonth = new Date(Date.now() - 3 * 30 * 24 * 60 * 60 * 1000);
+    expenses = await ExpenseModel.find({
+      userId,
+      createdAt: {
+        $lte: lastThreeMonth,
+      },
+    });
+  }
 
   return res.status(200).json({
-    data: expenses.map((expense) => ({
+    data: expenses!.map((expense) => ({
       name: expense.name,
       category: expense.category,
       amount: expense.amount,
