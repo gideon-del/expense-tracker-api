@@ -1,6 +1,8 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { ZodError } from "zod";
+import { config } from "dotenv";
+config();
 type UserToken = {
   accessToken: string;
   refreshToken: string;
@@ -10,6 +12,7 @@ const accessTokenSecret = process.env.JWT_ACCESS_SECRET!;
 const refreshTokenSecret = process.env.JWT_REFRESH_SECRET!;
 
 function generateToken(userId: string): UserToken {
+  console.log(userId);
   const accessToken = jwt.sign(
     {
       userId,
