@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { ZodError } from "zod";
 type UserToken = {
   accessToken: string;
   refreshToken: string;
@@ -65,10 +66,25 @@ function hashPassword(password: string): string {
 function comparePassword(passoword: string, hashedPassword: string) {
   return bcrypt.compareSync(passoword, hashedPassword);
 }
+function convertZodEror(error: ZodError<any>) {
+  const errors: any = {};
+  error.issues.forEach((error) => {
+    const errorDetail = error.message;
+    error.path.forEach((path) => {
+      if (errors.hasOwnProperty(path)) {
+        errors[path] = [...errors[path], errorDetail];
+      } else {
+        errors[path] = [errorDetail];
+      }
+    });
+  });
+  return errors;
+}
 export {
   generateToken,
   verifyToken,
   regenerateAccessToken,
   hashPassword,
   comparePassword,
+  convertZodEror,
 };

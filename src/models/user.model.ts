@@ -35,10 +35,10 @@ const userSchema = new Schema(
   {
     statics: {
       findUserWithEmail: async function (email: string) {
-        await this.findOne({ email });
+        return await this.findOne({ email });
       },
       findUserWithId: async function (id: string) {
-        await this.findById(id);
+        return await this.findById(id);
       },
     },
   }
