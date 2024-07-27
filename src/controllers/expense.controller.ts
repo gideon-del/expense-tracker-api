@@ -28,7 +28,7 @@ async function addExpense(req: Request, res: Response, next: NextFunction) {
     next(error);
   }
 }
-async function updateEvent(req: Request, res: Response) {
+async function updateExpense(req: Request, res: Response) {
   //@ts-ignore
   const { userId } = req.user;
 
@@ -44,7 +44,7 @@ async function updateEvent(req: Request, res: Response) {
       error: convertZodEror(error),
     });
   }
-  console.log(expenseId, req.query, req.params);
+
   const updatedExpense = await ExpenseModel.findByIdAndUpdate(
     expenseId,
     {
@@ -71,4 +71,21 @@ async function updateEvent(req: Request, res: Response) {
     message: "Expense updated",
   });
 }
-export { addExpense, updateEvent };
+async function getAllExpense(req: Request, res: Response) {
+  //@ts-ignore
+  const userId = req.user;
+  const expenses = await ExpenseModel.find({
+    userId,
+  });
+
+  return res.status(200).json({
+    data: expenses.map((expense) => ({
+      name: expense.name,
+      category: expense.category,
+      amount: expense.amount,
+      description: expense.description,
+      id: expense._id,
+    })),
+  });
+}
+export { addExpense, updateExpense, getAllExpense };
