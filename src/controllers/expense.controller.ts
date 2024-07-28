@@ -75,40 +75,35 @@ async function getAllExpense(req: Request, res: Response) {
   //@ts-ignore
   const userId = req.user;
 
-  const { filter } = req.query;
-  let expenses;
-  if (!filter) {
-    expenses = await ExpenseModel.find({
-      userId,
-    });
-  }
+  const { filter, start, end } = req.query;
+  let startDate: Date | null = null;
+  let endDate = new Date();
+
   if (filter === "Past week") {
-    const pastWeek = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    expenses = await ExpenseModel.find({
-      userId,
-      createdAt: {
-        $lte: pastWeek,
-      },
-    });
+    endDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
   }
   if (filter === "Last month") {
-    const lastMonth = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    expenses = await ExpenseModel.find({
-      userId,
-      createdAt: {
-        $lte: lastMonth,
-      },
-    });
+    endDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
   }
   if (filter === "Last 3 months") {
-    const lastThreeMonth = new Date(Date.now() - 3 * 30 * 24 * 60 * 60 * 1000);
-    expenses = await ExpenseModel.find({
-      userId,
-      createdAt: {
-        $lte: lastThreeMonth,
-      },
-    });
+    endDate = new Date(Date.now() - 3 * 30 * 24 * 60 * 60 * 1000);
   }
+  if (filter === "Custom" && start && end) {
+    startDate = new Date(start as string);
+    endDate = new Date(end as string);
+    console.log(endDate, startDate);
+  }
+  const expenseQuery: any = {
+    $lt: endDate,
+  };
+  if (startDate) {
+    expenseQuery["$gte"] = startDate;
+  }
+  console.log(endDate, startDate);
+  const expenses = await ExpenseModel.find({
+    userId,
+    createdAt: expenseQuery,
+  });
 
   return res.status(200).json({
     data: expenses!.map((expense) => ({
